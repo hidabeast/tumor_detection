@@ -161,7 +161,7 @@ def train(model, datasets, checkpoint_path, logs_path, init_epoch):
     # Begin training
     model.fit(
         x=datasets.train_data,
-        validation_data=datasets.test_data,
+        validation_data=datasets.validation_data, # from test data
         epochs=hp.num_epochs,
         batch_size=None,            # Required as None as we use an ImageDataGenerator; see preprocess.py get_data()
         callbacks=callback_list,
@@ -249,7 +249,7 @@ def main():
     model.compile(
         optimizer=model.optimizer,
         loss=model.loss_fn,
-        metrics=["sparse_categorical_accuracy"])
+        metrics=["accuracy"]) # from "sparse_categorical_accuracy"
 
     if ARGS.evaluate:
         test(model, datasets.test_data)
@@ -257,8 +257,8 @@ def main():
         # TODO: change the image path to be the image of your choice by changing
         # the lime-image flag when calling main.py to investigate
         # i.e. python main.py --evaluate --lime-image test/Bedroom/image_003.jpg
-        path = ARGS.lime_image
-        LIME_explainer(model, path, datasets.preprocess_fn, timestamp)
+        # path = ARGS.lime_image
+        # LIME_explainer(model, path, datasets.preprocess_fn, timestamp)
     else:
         train(model, datasets, checkpoint_path, logs_path, init_epoch)
 

@@ -1,6 +1,6 @@
 import kagglehub
 
 # Download latest version
-path = kagglehub.dataset_download("masoudnickparvar/brain-tumor-mri-dataset")
+path = kagglehub.dataset_download("simeondee/brain-tumor-images-dataset")
 
 print("Path to dataset files:", path)
