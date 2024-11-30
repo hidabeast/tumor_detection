@@ -209,11 +209,10 @@ class Datasets():
                 rotation_range=15,
                 width_shift_range=0.1,
                 height_shift_range=0.1,
-                brightness_range=(0.8, 1.2),
-                shear_range=0.2,
-                zoom_range=0.2,
+                brightness_range=(0.5, 1.25),
+                shear_range=0.1,
                 horizontal_flip=True,
-                vertical_flip=False,
+                vertical_flip=True,
                 preprocessing_function=self.preprocess_fn)
 
             # ============================================================
@@ -235,7 +234,7 @@ class Datasets():
         data_gen = data_gen.flow_from_directory(
             path,
             target_size=(img_size, img_size),
-            class_mode='sparse',
+            class_mode='binary', # from sparse
             batch_size=hp.batch_size,
             shuffle=shuffle,
             classes=classes_for_flow)

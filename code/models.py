@@ -4,7 +4,7 @@ from keras.layers import \
 
 import hyperparameters as hp
 
-from keras.losses import SparseCategoricalCrossentropy
+from keras.losses import SparseCategoricalCrossentropy, BinaryCrossentropy
 from keras.optimizers import SGD, Adam
 
 
@@ -158,11 +158,17 @@ class VGGModel(tf.keras.Model):
 
         # TODO: Write a classification head for our 15-scene classification task.
 
+        # self.head = [
+        #     Flatten(),
+        #     Dense(units=512, activation='relu'),
+        #     Dropout(rate=0.5),
+        #     Dense(units=15, activation='softmax')
+        # ]
+
         self.head = [
             Flatten(),
-            Dense(units=512, activation='relu'),
             Dropout(rate=0.5),
-            Dense(units=15, activation='softmax')
+            Dense(units=1, activation='sigmoid')
         ]
 
         # Don't change the below:
@@ -187,5 +193,5 @@ class VGGModel(tf.keras.Model):
         #       Read the documentation carefully, some might not work with our 
         #       model!
 
-        lossfxn = SparseCategoricalCrossentropy()
+        lossfxn = BinaryCrossentropy()
         return lossfxn(labels, predictions)

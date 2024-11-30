@@ -25,7 +25,7 @@ img_size = 224
 
 """
 Sample size for calculating the mean and standard deviation of the
-training data. This many images will be randomly seleted to be read
+training data. This many images will be randomly selected to be read
 into memory temporarily.
 """
 preprocess_sample_size = 400
@@ -46,4 +46,4 @@ batch_size = 10
 """
 The number of image scene classes. Don't change this.
 """
-num_classes = 15
+num_classes = 2 # from 15
