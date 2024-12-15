@@ -257,8 +257,8 @@ def main():
         # TODO: change the image path to be the image of your choice by changing
         # the lime-image flag when calling main.py to investigate
         # i.e. python main.py --evaluate --lime-image test/Bedroom/image_003.jpg
-        # path = ARGS.lime_image
-        # LIME_explainer(model, path, datasets.preprocess_fn, timestamp)
+        path = ARGS.lime_image
+        LIME_explainer(model, path, datasets.preprocess_fn, timestamp)
     else:
         train(model, datasets, checkpoint_path, logs_path, init_epoch)
 
