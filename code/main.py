@@ -168,6 +168,53 @@ def train(model, datasets, checkpoint_path, logs_path, init_epoch):
         initial_epoch=init_epoch,
     )
 
+def compute_saliency_maps(model, image_path, preprocess_fn):
+    """
+    Computes the saliency map for the given image and model.
+    """
+
+    raw_image = imread(image_path)
+    resized_image = resize(raw_image, (hp.img_size, hp.img_size, 3), preserve_range=True)
+    processed_image = preprocess_fn(resized_image)
+
+    input_image = tf.convert_to_tensor(np.expand_dims(processed_image, axis=0), dtype=tf.float32)
+
+    with tf.GradientTape() as tape:
+        tape.watch(input_image)
+        predictions = model(input_image)
+        class_index = tf.argmax(predictions[0])  
+        class_score = predictions[:, class_index]
+
+    saliency = tape.gradient(class_score, input_image)
+    saliency = tf.abs(saliency) 
+    saliency = tf.reduce_max(saliency, axis=-1).numpy()[0]
+
+    saliency = (saliency - np.min(saliency)) / (np.max(saliency) - np.min(saliency) + 1e-7)
+    saliency = saliency * 3  
+
+    return raw_image, saliency
+
+def visualize_saliency(raw_image, saliency_map):
+    """
+    Visualizes the saliency map overlaid on the original image.
+    """
+    raw_image_resized = resize(raw_image, (hp.img_size, hp.img_size, 3), preserve_range=True)
+
+    plt.figure(figsize=(12, 6))
+    plt.subplot(1, 2, 1)
+    plt.title("Original Image")
+    plt.imshow(raw_image_resized / 255.0) 
+    plt.axis('off')
+
+    plt.subplot(1, 2, 2)
+    plt.title("Overlayed Saliency Map")
+    plt.imshow(raw_image_resized / 255.0) 
+    plt.imshow(saliency_map, cmap='hot', alpha=0.5) 
+    plt.axis('off')
+
+    image_save_path = f"saliency_visualization_{datetime.now().strftime('%Y%m%d-%H%M%S')}.png"
+    plt.savefig(image_save_path, dpi=300, bbox_inches='tight')
+    plt.close()
 
 def test(model, test_data):
     """ Testing routine. """
@@ -253,6 +300,12 @@ def main():
 
     if ARGS.evaluate:
         test(model, datasets.test_data)
+
+        path = ARGS.lime_image
+        LIME_explainer(model, path, datasets.preprocess_fn, timestamp)
+
+        raw_image, saliency_map = compute_saliency_maps(model, path, datasets.preprocess_fn)
+        visualize_saliency(raw_image, saliency_map)
 
         path = ARGS.lime_image
         LIME_explainer(model, path, datasets.preprocess_fn, timestamp)
