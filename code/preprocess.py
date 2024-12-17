@@ -77,33 +77,11 @@ class Datasets():
 
             data_sample[i] = img
 
-        # TASK 1
-        # TODO: Calculate the mean and standard deviation
-        #       of the samples in data_sample and store them in
-        #       self.mean and self.std respectively.
-        #
-        #       Note: This is _not_ a mean over all pixels;
-        #             it is a mean image (the mean input data point).
-        #       
-        #             For example, the mean of the two images:
-        #
-        #             [[[0, 0, 100], [0, 0, 100]],      [[[100, 0, 0], [100, 0, 0]],
-        #              [[0, 100, 0], [0, 100, 0]],  and  [[0, 100, 0], [0, 100, 0]],
-        #              [[100, 0, 0], [100, 0, 0]]]       [[0, 0, 100], [0, 0, 100]]]
-        #
-        #             would be
-        #
-        #             [[[50, 0, 50], [50, 0, 50]],
-        #              [[0, 100, 0], [0, 100, 0]],
-        #              [[50, 0, 50], [50, 0, 50]]]
-        #
-        # ==========================================================
         mean = np.mean(data_sample, axis=0)
         self.mean = mean
         std = np.std(data_sample, axis=0)
         self.std = std
 
-        # ==========================================================
 
         print("Dataset mean shape: [{0}, {1}, {2}]".format(
             self.mean.shape[0], self.mean.shape[1], self.mean.shape[2]))
@@ -127,17 +105,9 @@ class Datasets():
             img - numpy array of shape (image size, image size, 3)
         """
 
-        # TASK 1
-        # TODO: Standardize the input image. Use self.mean and self.std
-        #       that were calculated in calc_mean_and_std() to perform
-        #       the standardization.
-        # =============================================================
-
         mean = self.mean
         std = self.std
         img = (img - mean) / (std + 1e-10)
-
-        # =============================================================
 
         return img
 
@@ -159,16 +129,6 @@ class Datasets():
         else:
             img = img / 255.
             img = self.standardize(img)
-
-        # EXTRA CREDIT: 
-        # Write your own custom data augmentation procedure, creating
-        # an effect that cannot be achieved using the arguments of
-        # ImageDataGenerator. This can potentially boost your accuracy
-        # in the validation set. Note that this augmentation should
-        # only be applied to some input images, so make use of the
-        # 'random' module to make sure this happens. Also, make sure
-        # that ImageDataGenerator uses *this* function for preprocessing
-        # on augmented data.
 
         if random.random() < 0.3:
             img = img + tf.random.uniform(
@@ -197,16 +157,6 @@ class Datasets():
         """
 
         if augment:
-            # TODO: Use the arguments of ImageDataGenerator()
-            #       to augment the data. Leave the
-            #       preprocessing_function argument as is unless
-            #       you have written your own custom preprocessing
-            #       function (see custom_preprocess_fn()).
-            #
-            # Documentation for ImageDataGenerator: https://bit.ly/2wN2EmK
-            #
-            # ============================================================
-
             data_gen = tf.keras.preprocessing.image.ImageDataGenerator(
                 rotation_range=15,
                 width_shift_range=0.1,
@@ -216,10 +166,7 @@ class Datasets():
                 horizontal_flip=True,
                 vertical_flip=True,
                 preprocessing_function=self.preprocess_fn)
-
-            # ============================================================
         else:
-            # Don't modify this
             data_gen = tf.keras.preprocessing.image.ImageDataGenerator(
                 preprocessing_function=self.preprocess_fn)
 

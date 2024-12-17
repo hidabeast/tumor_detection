@@ -13,42 +13,7 @@ class YourModel(tf.keras.Model):
 
     def __init__(self):
         super(YourModel, self).__init__()
-
-        # TASK 1
-        # TODO: Select an optimizer for your network (see the documentation
-        #       for tf.keras.optimizers)
         self.optimizer = Adam(learning_rate=hp.learning_rate)
-        # TASK 1
-        # TODO: Build your own convolutional neural network, using Dropout at
-        #       least once. The input image will be passed through each Keras
-        #       layer in self.architecture sequentially. Refer to the imports
-        #       to see what Keras layers you can use to build your network.
-        #       Feel free to import other layers, but the layers already
-        #       imported are enough for this assignment.
-        #
-        #       Remember: Your network must have under 15 million parameters!
-        #       You will see a model summary when you run the program that
-        #       displays the total number of parameters of your network.
-        #
-        #       Remember: Because this is a 15-scene classification task,
-        #       the output dimension of the network must be 15. That is,
-        #       passing a tensor of shape [batch_size, img_size, img_size, 1]
-        #       into the network will produce an output of shape
-        #       [batch_size, 15].
-        #
-        #       Note: Keras layers such as Conv2D and Dense give you the
-        #             option of defining an activation function for the layer.
-        #             For example, if you wanted ReLU activation on a Conv2D
-        #             layer, you'd simply pass the string 'relu' to the
-        #             activation parameter when instantiating the layer.
-        #             While the choice of what activation functions you use
-        #             is up to you, the final layer must use the softmax
-        #             activation function so that the output of your network
-        #             is a probability distribution.
-        #
-        #       Note: Flatten is a very useful layer. You shouldn't have to
-        #             explicitly reshape any tensors anywhere in your network.
-
         self.architecture = [
               Conv2D(filters=16, kernel_size=3, activation='relu', padding='same'), 
               Conv2D(filters=16, kernel_size=3, activation='relu', padding='same'),
@@ -90,9 +55,6 @@ class YourModel(tf.keras.Model):
     def loss_fn(labels, predictions):
         """ Loss function for the model. """
 
-        # TASK 1
-        # TODO: Select a loss function for your network 
-        #       (see the documentation for tf.keras.losses)
         lossfxn = SparseCategoricalCrossentropy()
         return lossfxn(labels, predictions)
 
@@ -101,13 +63,7 @@ class VGGModel(tf.keras.Model):
     def __init__(self):
         super(VGGModel, self).__init__()
 
-        # TASK 3
-        # TODO: Select an optimizer for your network (see the documentation
-        #       for tf.keras.optimizers)
-
         self.optimizer = Adam(learning_rate=hp.learning_rate)
-
-        # Don't change the below:
 
         self.vgg16 = [
             # Block 1
@@ -148,15 +104,8 @@ class VGGModel(tf.keras.Model):
             MaxPool2D(2, name="block5_pool")
         ]
 
-        # TASK 3
-        # TODO: Make all layers in self.vgg16 non-trainable. This will freeze the
-        #       pretrained VGG16 weights into place so that only the classificaiton
-        #       head is trained.
-
         for layer in self.vgg16:
               layer.trainable = False
-
-        # TODO: Write a classification head for our 15-scene classification task.
 
         # self.head = [
         #     Flatten(),
@@ -171,7 +120,6 @@ class VGGModel(tf.keras.Model):
             Dense(units=1, activation='sigmoid')
         ]
 
-        # Don't change the below:
         self.vgg16 = tf.keras.Sequential(self.vgg16, name="vgg_base")
         self.head = tf.keras.Sequential(self.head, name="vgg_head")
 
@@ -186,12 +134,6 @@ class VGGModel(tf.keras.Model):
     @staticmethod
     def loss_fn(labels, predictions):
         """ Loss function for model. """
-
-        # TASK 3
-        # TODO: Select a loss function for your network (see the documentation
-        #       for tf.keras.losses)
-        #       Read the documentation carefully, some might not work with our 
-        #       model!
 
         lossfxn = BinaryCrossentropy()
         return lossfxn(labels, predictions)
